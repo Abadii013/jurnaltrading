@@ -1,0 +1,966 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg: #0E141F;
+    --panel: #161C29;
+    --panel-alt: #1D2433;
+    --border: #2A3244;
+    --text: #E7E3D8;
+    --text-dim: #8B93A5;
+    --gold: #C9A15C;
+    --gold-dim: #8A7040;
+    --green: #5FA98A;
+    --red: #C1594A;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+    --font-body: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  .fx-app{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* ---- ticker ---- */
+  .ticker-wrap{
+    background: var(--panel-alt);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 10px 0;
+  }
+  .ticker-track{
+    display: inline-flex;
+    gap: 36px;
+    animation: scroll-left 30s linear infinite;
+    padding-left: 100%;
+  }
+  .ticker-wrap:hover .ticker-track{ animation-play-state: paused; }
+  @keyframes scroll-left{
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-100%); }
+  }
+  .ticker-item{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--text-dim);
+  }
+  .ticker-item b{ color: var(--text); font-weight: 600; margin-right: 6px; }
+  .ticker-item.up{ color: var(--green); }
+  .ticker-item.down{ color: var(--red); }
+
+  /* ---- header ---- */
+  .header{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 36px 24px 8px;
+  }
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+  .title{
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle{
+    color: var(--text-dim);
+    font-size: 14.5px;
+    margin: 0;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+
+  .container{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  /* ---- stat cards ---- */
+  .stats-row{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 900px){ .stats-row{ grid-template-columns: repeat(2, 1fr); } }
+  .stat-card{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .stat-label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .stat-value{
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .stat-value.pos{ color: var(--green); }
+  .stat-value.neg{ color: var(--red); }
+
+  /* ---- layout grid ---- */
+  .grid{
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .panel h2{
+    font-family: var(--font-display);
+    font-size: 17px;
+    margin: 0 0 16px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .panel h2 .dot{ width:7px; height:7px; border-radius:50%; background:var(--gold); display:inline-block; }
+
+  label{
+    display:block;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin: 12px 0 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  label:first-of-type{ margin-top: 0; }
+  input, select, textarea{
+    width: 100%;
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 9px 10px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus{ border-color: var(--gold-dim); }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  textarea{ resize: vertical; min-height: 54px; font-family: var(--font-body); }
+
+  .dir-toggle{ display:flex; gap:8px; }
+  .dir-btn{
+    flex:1;
+    text-align:center;
+    padding: 9px 0;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--panel-alt);
+    color: var(--text-dim);
+    cursor:pointer;
+    font-size: 13px;
+    font-weight: 600;
+    user-select:none;
+  }
+  .dir-btn.active.buy{ background: rgba(95,169,138,0.18); border-color: var(--green); color: var(--green); }
+  .dir-btn.active.sell{ background: rgba(193,89,74,0.18); border-color: var(--red); color: var(--red); }
+
+  .btn{
+    margin-top: 16px;
+    width: 100%;
+    background: var(--gold);
+    color: #16110A;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 0;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: var(--font-body);
+  }
+  .btn:hover{ filter: brightness(1.08); }
+  .btn.ghost{
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  /* ---- equity chart ---- */
+  .chart-wrap{ margin-bottom: 20px; }
+  .chart-empty{
+    color: var(--text-dim);
+    font-size: 13px;
+    padding: 30px 0;
+    text-align:center;
+  }
+
+  /* ---- filters ---- */
+  .filters{
+    display:flex; gap:10px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .filters select, .filters input{ width: auto; min-width: 130px; }
+  .filters input{ flex:1; min-width: 160px; }
+
+  /* ---- table ---- */
+  table{ width:100%; border-collapse: collapse; }
+  thead th{
+    text-align:left;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td{
+    padding: 10px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+  }
+  tbody tr:hover{ background: rgba(255,255,255,0.02); }
+  .pair-cell{ font-family: var(--font-body); font-weight: 600; }
+  .pill{
+    display:inline-block;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .pill.buy{ background: rgba(95,169,138,0.15); color: var(--green); }
+  .pill.sell{ background: rgba(193,89,74,0.15); color: var(--red); }
+  .pnl.pos{ color: var(--green); }
+  .pnl.neg{ color: var(--red); }
+  .row-actions{ display:flex; gap:8px; }
+  .icon-btn{
+    background:none; border:none; cursor:pointer; color: var(--text-dim);
+    font-family: var(--font-body); font-size: 12px;
+  }
+  .icon-btn:hover{ color: var(--text); }
+  .empty-state{
+    text-align:center;
+    padding: 50px 20px;
+    color: var(--text-dim);
+    font-size: 13.5px;
+  }
+  .empty-state .big{ font-family: var(--font-display); font-size: 18px; color: var(--text); margin-bottom: 6px; }
+
+  /* ---- breakdown ---- */
+  .breakdown-item{ margin-bottom: 12px; }
+  .breakdown-top{ display:flex; justify-content:space-between; font-size: 13px; margin-bottom: 5px; }
+  .breakdown-bar-bg{ height: 6px; background: var(--panel-alt); border-radius: 4px; overflow:hidden; }
+  .breakdown-bar{ height:100%; background: var(--gold); border-radius: 4px; }
+
+  .settings-line{ display:flex; gap:10px; align-items:center; margin-bottom: 4px; }
+  .settings-line label{ margin:0; flex-shrink:0; width: 110px; }
+
+  .toast{
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--panel-alt); border: 1px solid var(--border);
+    color: var(--text); padding: 12px 18px; border-radius: 8px;
+    font-size: 13px; opacity: 0; transform: translateY(10px);
+    transition: all .25s ease; pointer-events:none;
+  }
+  .toast.show{ opacity: 1; transform: translateY(0); }
+</style>
+
+<div class="fx-app" id="app">
+
+  <div class="ticker-wrap">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <div class="header">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;">
+      <div>
+        <p class="eyebrow">Trading Journal</p>
+        <h1 class="title">FX Ledger</h1>
+      </div>
+      <div style="text-align:right;">
+        <div id="syncStatus" style="font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim); margin-bottom:6px;">● Belum tersambung ke sinkronisasi</div>
+        <button class="icon-btn" style="border:1px solid var(--border); border-radius:6px; padding:5px 10px;" onclick="toggleSyncPanel()">Pengaturan Sinkron</button>
+      </div>
+    </div>
+    <p class="subtitle">Catat tiap posisi, lihat pola menang-kalahmu, dan biarkan datanya bicara — bukan perasaan.</p>
+    <p class="subtitle" style="margin-top:8px; font-size:12px;">Data tersimpan di browser ini saja. Gunakan tombol <b>Unduh Backup</b> secara berkala agar datamu aman.</p>
+
+    <div class="panel" id="syncPanel" style="display:none; margin-top:16px;">
+      <h2><span class="dot"></span>Sinkronisasi Antar Perangkat</h2>
+      <p style="font-size:12.5px; color:var(--text-dim); margin-top:-8px; line-height:1.6;">
+        Pakai <b>JSONBin.io</b> (gratis) supaya jurnal ini sama persis di semua perangkat.
+        Buat akun di <span style="color:var(--gold);">jsonbin.io</span> → salin <b>X-Master-Key</b> dari dashboard, tempel di bawah.
+        Perangkat pertama: klik <b>Buat Bin Baru</b>. Perangkat lain: masukkan API Key yang sama + Bin ID yang sama, lalu <b>Hubungkan</b>.
+      </p>
+      <label>API Key (X-Master-Key)</label>
+      <input type="password" id="syncApiKey" placeholder="tempel API key dari jsonbin.io">
+      <label>Bin ID</label>
+      <input type="text" id="syncBinId" placeholder="kosongkan jika belum punya">
+      <div style="display:flex; gap:8px; margin-top:14px;">
+        <button class="btn" style="margin-top:0;" onclick="connectSync()">Hubungkan</button>
+        <button class="btn ghost" style="margin-top:0;" onclick="createNewBin()">Buat Bin Baru</button>
+        <button class="btn ghost" style="margin-top:0;" onclick="syncNow()">Sync Sekarang</button>
+        <button class="btn ghost" style="margin-top:0;" onclick="disconnectSync()">Putuskan</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="stats-row" id="statsRow"></div>
+
+    <div class="panel chart-wrap">
+      <h2><span class="dot"></span>Kurva Ekuitas</h2>
+      <div id="chartHolder"></div>
+    </div>
+
+    <div class="grid">
+      <div class="panel" id="formPanel">
+        <h2><span class="dot"></span><span id="formTitle">Catat Trade Baru</span></h2>
+
+        <label>Tanggal</label>
+        <input type="date" id="f-date">
+
+        <label>Pair</label>
+        <input list="pairList" id="f-pair" placeholder="EUR/USD">
+        <datalist id="pairList">
+          <option value="EUR/USD"><option value="GBP/USD"><option value="USD/JPY">
+          <option value="AUD/USD"><option value="USD/CHF"><option value="NZD/USD">
+          <option value="USD/CAD"><option value="EUR/JPY"><option value="GBP/JPY">
+          <option value="XAU/USD">
+        </datalist>
+
+        <label>Arah</label>
+        <div class="dir-toggle">
+          <div class="dir-btn buy active" id="btnBuy" onclick="setDirection('Buy')">Buy</div>
+          <div class="dir-btn sell" id="btnSell" onclick="setDirection('Sell')">Sell</div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label>Lot</label>
+            <input type="number" step="0.01" id="f-lot" placeholder="0.10">
+          </div>
+          <div>
+            <label>Hasil (Pips)</label>
+            <input type="number" step="0.1" id="f-pips" placeholder="+25 / -12">
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label>Entry</label>
+            <input type="number" step="any" id="f-entry" placeholder="1.0850">
+          </div>
+          <div>
+            <label>Exit</label>
+            <input type="number" step="any" id="f-exit" placeholder="1.0875">
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label>Stop Loss</label>
+            <input type="number" step="any" id="f-sl" placeholder="opsional">
+          </div>
+          <div>
+            <label>Take Profit</label>
+            <input type="number" step="any" id="f-tp" placeholder="opsional">
+          </div>
+        </div>
+
+        <label>Profit / Loss (mata uang akun)</label>
+        <input type="number" step="0.01" id="f-pnl" placeholder="+15.50 / -8.20">
+
+        <label>Strategi / Setup</label>
+        <input type="text" id="f-strategy" placeholder="Breakout, Pullback, News, ...">
+
+        <label>Kondisi Psikologis</label>
+        <select id="f-emotion">
+          <option value="">— pilih —</option>
+          <option>Tenang & disiplin</option>
+          <option>Percaya diri</option>
+          <option>Ragu-ragu</option>
+          <option>FOMO</option>
+          <option>Balas dendam (revenge trade)</option>
+          <option>Serakah</option>
+          <option>Takut</option>
+        </select>
+
+        <label>Catatan</label>
+        <textarea id="f-notes" placeholder="Apa yang terjadi, apa yang bisa diperbaiki..."></textarea>
+
+        <button class="btn" onclick="saveTrade()" id="saveBtn">Simpan Trade</button>
+        <button class="btn ghost" style="display:none" onclick="cancelEdit()" id="cancelBtn">Batalkan Edit</button>
+
+        <div style="display:flex; gap:8px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+          <button class="btn ghost" style="margin-top:0; flex:1;" onclick="exportBackup()">Unduh Backup</button>
+          <button class="btn ghost" style="margin-top:0; flex:1;" onclick="document.getElementById('importFile').click()">Pulihkan Backup</button>
+          <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importBackup(event)">
+        </div>
+      </div>
+
+      <div>
+        <div class="panel" style="margin-bottom:20px;">
+          <h2><span class="dot"></span>Riwayat Trade</h2>
+          <div class="filters">
+            <select id="filterPair" onchange="renderTable()"><option value="">Semua Pair</option></select>
+            <select id="filterDir" onchange="renderTable()">
+              <option value="">Semua Arah</option>
+              <option value="Buy">Buy</option>
+              <option value="Sell">Sell</option>
+            </select>
+            <input type="text" id="filterSearch" placeholder="Cari catatan / strategi..." oninput="renderTable()">
+          </div>
+          <div id="tableHolder"></div>
+        </div>
+
+        <div class="panel" id="breakdownPanel">
+          <h2><span class="dot"></span>Performa per Pair</h2>
+          <div id="breakdownHolder"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function(){
+  let trades = [];
+  let editingId = null;
+  let currentDirection = 'Buy';
+  let loaded = false;
+
+  const STORAGE_KEY = 'fx_trades_v1';
+
+  function todayStr(){
+    const d = new Date();
+    return d.toISOString().slice(0,10);
+  }
+  document.getElementById('f-date').value = todayStr();
+
+  function fmtMoney(n){
+    const sign = n > 0 ? '+' : '';
+    return sign + n.toFixed(2);
+  }
+  function fmtPips(n){
+    const sign = n > 0 ? '+' : '';
+    return sign + n.toFixed(1);
+  }
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(()=> t.classList.remove('show'), 2200);
+  }
+
+  const SYNC_CONFIG_KEY = 'fx_sync_config';
+  let syncConfig = null; // { apiKey, binId }
+
+  function loadSyncConfig(){
+    try{
+      const raw = localStorage.getItem(SYNC_CONFIG_KEY);
+      syncConfig = raw ? JSON.parse(raw) : null;
+    }catch(e){ syncConfig = null; }
+  }
+
+  function saveSyncConfig(cfg){
+    syncConfig = cfg;
+    localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(cfg));
+  }
+
+  function setSyncStatus(text, ok){
+    const el = document.getElementById('syncStatus');
+    el.textContent = (ok ? '● ' : '● ') + text;
+    el.style.color = ok ? 'var(--green)' : 'var(--text-dim)';
+  }
+
+  async function cloudFetch(){
+    if(!syncConfig) return null;
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${syncConfig.binId}/latest`, {
+      headers: { 'X-Master-Key': syncConfig.apiKey }
+    });
+    if(!res.ok) throw new Error('fetch failed: ' + res.status);
+    const data = await res.json();
+    return Array.isArray(data.record) ? data.record : [];
+  }
+
+  async function cloudPush(list){
+    if(!syncConfig) return;
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${syncConfig.binId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': syncConfig.apiKey },
+      body: JSON.stringify(list)
+    });
+    if(!res.ok) throw new Error('push failed: ' + res.status);
+  }
+
+  window.toggleSyncPanel = function(){
+    const p = document.getElementById('syncPanel');
+    p.style.display = p.style.display === 'none' ? 'block' : 'none';
+    if(syncConfig){
+      document.getElementById('syncApiKey').value = syncConfig.apiKey;
+      document.getElementById('syncBinId').value = syncConfig.binId;
+    }
+  };
+
+  window.connectSync = async function(){
+    const apiKey = document.getElementById('syncApiKey').value.trim();
+    const binId = document.getElementById('syncBinId').value.trim();
+    if(!apiKey || !binId){
+      showToast('Isi API Key dan Bin ID dulu.');
+      return;
+    }
+    saveSyncConfig({ apiKey, binId });
+    setSyncStatus('Menyambungkan...', false);
+    try{
+      const remote = await cloudFetch();
+      trades = remote || [];
+      await persist();
+      renderAll();
+      setSyncStatus('Tersambung — data disinkron', true);
+      showToast('Berhasil tersambung ke cloud.');
+    }catch(e){
+      setSyncStatus('Gagal tersambung, cek API Key/Bin ID', false);
+      showToast('Gagal tersambung. Cek API Key & Bin ID.');
+    }
+  };
+
+  window.createNewBin = async function(){
+    const apiKey = document.getElementById('syncApiKey').value.trim();
+    if(!apiKey){
+      showToast('Isi API Key dulu sebelum membuat bin baru.');
+      return;
+    }
+    setSyncStatus('Membuat bin baru...', false);
+    try{
+      const res = await fetch('https://api.jsonbin.io/v3/b', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Master-Key': apiKey, 'X-Bin-Name': 'fx-ledger' },
+        body: JSON.stringify(trades)
+      });
+      if(!res.ok) throw new Error('create failed: ' + res.status);
+      const data = await res.json();
+      const binId = data.metadata.id;
+      document.getElementById('syncBinId').value = binId;
+      saveSyncConfig({ apiKey, binId });
+      setSyncStatus('Tersambung — data disinkron', true);
+      showToast('Bin baru dibuat. Bin ID: ' + binId + ' — catat ini untuk perangkat lain.');
+    }catch(e){
+      setSyncStatus('Gagal membuat bin baru', false);
+      showToast('Gagal membuat bin baru. Cek API Key.');
+    }
+  };
+
+  window.syncNow = async function(){
+    if(!syncConfig){
+      showToast('Belum tersambung ke sinkronisasi.');
+      return;
+    }
+    setSyncStatus('Menyinkronkan...', false);
+    try{
+      const remote = await cloudFetch();
+      trades = remote || [];
+      await persist();
+      renderAll();
+      setSyncStatus('Tersambung — data disinkron', true);
+      showToast('Data terbaru sudah ditarik.');
+    }catch(e){
+      setSyncStatus('Gagal sinkron, cek koneksi', false);
+      showToast('Gagal sinkron.');
+    }
+  };
+
+  window.disconnectSync = function(){
+    localStorage.removeItem(SYNC_CONFIG_KEY);
+    syncConfig = null;
+    document.getElementById('syncApiKey').value = '';
+    document.getElementById('syncBinId').value = '';
+    setSyncStatus('Belum tersambung ke sinkronisasi', false);
+    showToast('Sinkronisasi diputuskan. Data tetap tersimpan lokal.');
+  };
+
+  async function loadTrades(){
+    loadSyncConfig();
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      trades = raw ? JSON.parse(raw) : [];
+    }catch(e){
+      trades = [];
+    }
+    if(syncConfig){
+      setSyncStatus('Menyambungkan...', false);
+      try{
+        const remote = await cloudFetch();
+        trades = remote || [];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
+        setSyncStatus('Tersambung — data disinkron', true);
+      }catch(e){
+        setSyncStatus('Gagal sinkron, pakai data lokal', false);
+      }
+    }
+    loaded = true;
+    renderAll();
+  }
+
+  async function persist(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
+    }catch(e){
+      showToast('Gagal menyimpan data di browser ini.');
+    }
+    if(syncConfig){
+      try{
+        await cloudPush(trades);
+      }catch(e){
+        showToast('Tersimpan lokal, tapi gagal sinkron ke cloud.');
+      }
+    }
+  }
+
+  window.exportBackup = function(){
+    const blob = new Blob([JSON.stringify(trades, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'fx-ledger-backup-' + todayStr() + '.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Backup diunduh.');
+  };
+
+  window.importBackup = function(event){
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async function(e){
+      try{
+        const parsed = JSON.parse(e.target.result);
+        if(!Array.isArray(parsed)) throw new Error('format tidak valid');
+        trades = parsed;
+        await persist();
+        renderAll();
+        showToast('Backup berhasil dipulihkan.');
+      }catch(err){
+        showToast('File backup tidak valid.');
+      }
+      event.target.value = '';
+    };
+    reader.readAsText(file);
+  };
+
+  window.setDirection = function(dir){
+    currentDirection = dir;
+    document.getElementById('btnBuy').classList.toggle('active', dir === 'Buy');
+    document.getElementById('btnSell').classList.toggle('active', dir === 'Sell');
+  };
+
+  window.saveTrade = async function(){
+    const pair = document.getElementById('f-pair').value.trim();
+    const date = document.getElementById('f-date').value;
+    if(!pair || !date){
+      showToast('Isi minimal tanggal & pair dulu ya.');
+      return;
+    }
+    const trade = {
+      id: editingId || ('t_' + Date.now()),
+      date: date,
+      pair: pair.toUpperCase(),
+      direction: currentDirection,
+      lot: parseFloat(document.getElementById('f-lot').value) || 0,
+      pips: parseFloat(document.getElementById('f-pips').value) || 0,
+      entry: parseFloat(document.getElementById('f-entry').value) || null,
+      exit: parseFloat(document.getElementById('f-exit').value) || null,
+      sl: parseFloat(document.getElementById('f-sl').value) || null,
+      tp: parseFloat(document.getElementById('f-tp').value) || null,
+      pnl: parseFloat(document.getElementById('f-pnl').value) || 0,
+      strategy: document.getElementById('f-strategy').value.trim(),
+      emotion: document.getElementById('f-emotion').value,
+      notes: document.getElementById('f-notes').value.trim(),
+      createdAt: editingId ? (trades.find(t=>t.id===editingId)||{}).createdAt || Date.now() : Date.now()
+    };
+
+    if(editingId){
+      trades = trades.map(t => t.id === editingId ? trade : t);
+      showToast('Trade diperbarui.');
+    } else {
+      trades.push(trade);
+      showToast('Trade tersimpan.');
+    }
+    cancelEdit();
+    await persist();
+    renderAll();
+  };
+
+  window.cancelEdit = function(){
+    editingId = null;
+    document.getElementById('formTitle').textContent = 'Catat Trade Baru';
+    document.getElementById('saveBtn').textContent = 'Simpan Trade';
+    document.getElementById('cancelBtn').style.display = 'none';
+    ['f-pair','f-lot','f-pips','f-entry','f-exit','f-sl','f-tp','f-pnl','f-strategy','f-notes'].forEach(id=>{
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('f-emotion').value = '';
+    document.getElementById('f-date').value = todayStr();
+    setDirection('Buy');
+  };
+
+  window.editTrade = function(id){
+    const t = trades.find(x=>x.id===id);
+    if(!t) return;
+    editingId = id;
+    document.getElementById('formTitle').textContent = 'Edit Trade';
+    document.getElementById('saveBtn').textContent = 'Update Trade';
+    document.getElementById('cancelBtn').style.display = 'block';
+    document.getElementById('f-date').value = t.date;
+    document.getElementById('f-pair').value = t.pair;
+    document.getElementById('f-lot').value = t.lot || '';
+    document.getElementById('f-pips').value = t.pips || '';
+    document.getElementById('f-entry').value = t.entry ?? '';
+    document.getElementById('f-exit').value = t.exit ?? '';
+    document.getElementById('f-sl').value = t.sl ?? '';
+    document.getElementById('f-tp').value = t.tp ?? '';
+    document.getElementById('f-pnl').value = t.pnl || '';
+    document.getElementById('f-strategy').value = t.strategy || '';
+    document.getElementById('f-emotion').value = t.emotion || '';
+    document.getElementById('f-notes').value = t.notes || '';
+    setDirection(t.direction);
+    document.getElementById('formPanel').scrollIntoView({behavior:'smooth', block:'start'});
+  };
+
+  window.deleteTrade = async function(id){
+    if(!confirm('Hapus trade ini?')) return;
+    trades = trades.filter(t=>t.id!==id);
+    await persist();
+    renderAll();
+    showToast('Trade dihapus.');
+  };
+
+  function computeStats(list){
+    const total = list.length;
+    const wins = list.filter(t=>t.pnl > 0);
+    const losses = list.filter(t=>t.pnl < 0);
+    const totalPnl = list.reduce((s,t)=>s+t.pnl,0);
+    const totalPips = list.reduce((s,t)=>s+t.pips,0);
+    const winRate = total ? (wins.length/total*100) : 0;
+
+    let rrSum = 0, rrCount = 0;
+    list.forEach(t=>{
+      if(t.entry && t.sl && t.tp){
+        const risk = Math.abs(t.entry - t.sl);
+        const reward = Math.abs(t.tp - t.entry);
+        if(risk > 0){ rrSum += reward/risk; rrCount++; }
+      }
+    });
+    const avgRR = rrCount ? (rrSum/rrCount) : null;
+
+    const sorted = [...list].sort((a,b)=> new Date(a.date) - new Date(b.date) || a.createdAt - b.createdAt);
+    let streak = 0, streakType = null;
+    for(let i = sorted.length - 1; i >= 0; i--){
+      const isWin = sorted[i].pnl > 0;
+      if(streakType === null){ streakType = isWin ? 'win' : 'loss'; streak = 1; }
+      else if((isWin && streakType==='win') || (!isWin && streakType==='loss')){ streak++; }
+      else break;
+    }
+
+    return { total, wins: wins.length, losses: losses.length, totalPnl, totalPips, winRate, avgRR, streak, streakType };
+  }
+
+  function renderStats(){
+    const s = computeStats(trades);
+    const el = document.getElementById('statsRow');
+    const streakLabel = s.total ? (s.streak + ' ' + (s.streakType==='win' ? 'Menang' : 'Kalah') + ' Beruntun') : '—';
+    el.innerHTML = `
+      <div class="stat-card">
+        <div class="stat-label">Total P&amp;L</div>
+        <div class="stat-value ${s.totalPnl>0?'pos':s.totalPnl<0?'neg':''}">${s.total? fmtMoney(s.totalPnl) : '—'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Win Rate</div>
+        <div class="stat-value">${s.total? s.winRate.toFixed(0)+'%' : '—'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Trade</div>
+        <div class="stat-value">${s.total}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rata-rata R:R</div>
+        <div class="stat-value">${s.avgRR ? '1:'+s.avgRR.toFixed(2) : '—'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Streak Saat Ini</div>
+        <div class="stat-value ${s.streakType==='win'?'pos':s.streakType==='loss'?'neg':''}">${streakLabel}</div>
+      </div>
+    `;
+  }
+
+  function renderTicker(){
+    const track = document.getElementById('tickerTrack');
+    if(!trades.length){
+      track.innerHTML = '<span class="ticker-item">Belum ada trade tercatat — mulai isi form di bawah.</span>'.repeat(2);
+      return;
+    }
+    const recent = [...trades].sort((a,b)=> b.createdAt - a.createdAt).slice(0,12);
+    const items = recent.map(t=>{
+      const cls = t.pnl > 0 ? 'up' : t.pnl < 0 ? 'down' : '';
+      return `<span class="ticker-item ${cls}"><b>${t.pair}</b>${fmtPips(t.pips)}p · ${fmtMoney(t.pnl)}</span>`;
+    }).join('');
+    track.innerHTML = items + items;
+  }
+
+  function renderChart(){
+    const holder = document.getElementById('chartHolder');
+    if(!trades.length){
+      holder.innerHTML = '<div class="chart-empty">Kurva ekuitas akan muncul setelah kamu mencatat trade pertama.</div>';
+      return;
+    }
+    const sorted = [...trades].sort((a,b)=> new Date(a.date) - new Date(b.date) || a.createdAt - b.createdAt);
+    let running = 0;
+    const points = sorted.map(t=>{ running += t.pnl; return running; });
+
+    const w = 1000, h = 220, pad = 30;
+    const min = Math.min(0, ...points);
+    const max = Math.max(0, ...points);
+    const range = (max - min) || 1;
+
+    const stepX = points.length > 1 ? (w - pad*2) / (points.length - 1) : 0;
+    const coords = points.map((v,i)=>{
+      const x = pad + i*stepX;
+      const y = h - pad - ((v - min)/range)*(h - pad*2);
+      return [x,y];
+    });
+    const path = coords.map((c,i)=> (i===0?'M':'L')+c[0].toFixed(1)+','+c[1].toFixed(1)).join(' ');
+    const zeroY = h - pad - ((0 - min)/range)*(h - pad*2);
+    const last = points[points.length-1];
+    const lastColor = last >= 0 ? 'var(--green)' : 'var(--red)';
+
+    const areaPath = path + ` L${coords[coords.length-1][0].toFixed(1)},${(h-pad).toFixed(1)} L${coords[0][0].toFixed(1)},${(h-pad).toFixed(1)} Z`;
+
+    holder.innerHTML = `
+      <svg viewBox="0 0 ${w} ${h}" style="width:100%; height:220px;" preserveAspectRatio="none">
+        <line x1="${pad}" y1="${zeroY}" x2="${w-pad}" y2="${zeroY}" stroke="var(--border)" stroke-dasharray="4 4" />
+        <path d="${areaPath}" fill="${lastColor}" opacity="0.08" />
+        <path d="${path}" fill="none" stroke="${lastColor}" stroke-width="2.5" />
+      </svg>
+    `;
+  }
+
+  function renderBreakdown(){
+    const holder = document.getElementById('breakdownHolder');
+    if(!trades.length){
+      holder.innerHTML = '<div class="empty-state" style="padding:10px 0;">Belum ada data.</div>';
+      return;
+    }
+    const byPair = {};
+    trades.forEach(t=>{
+      byPair[t.pair] = byPair[t.pair] || { pnl:0, count:0 };
+      byPair[t.pair].pnl += t.pnl;
+      byPair[t.pair].count += 1;
+    });
+    const entries = Object.entries(byPair).sort((a,b)=> b[1].pnl - a[1].pnl);
+    const maxAbs = Math.max(...entries.map(e=>Math.abs(e[1].pnl)), 1);
+
+    holder.innerHTML = entries.map(([pair,data])=>{
+      const pct = Math.abs(data.pnl)/maxAbs*100;
+      const cls = data.pnl >= 0 ? 'pos' : 'neg';
+      return `
+        <div class="breakdown-item">
+          <div class="breakdown-top">
+            <span>${pair} <span style="color:var(--text-dim); font-family:var(--font-mono); font-size:11px;">(${data.count})</span></span>
+            <span class="${cls}" style="font-family:var(--font-mono);">${fmtMoney(data.pnl)}</span>
+          </div>
+          <div class="breakdown-bar-bg"><div class="breakdown-bar" style="width:${pct}%; ${data.pnl<0?'background:var(--red)':''}"></div></div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function populatePairFilter(){
+    const sel = document.getElementById('filterPair');
+    const current = sel.value;
+    const pairs = [...new Set(trades.map(t=>t.pair))].sort();
+    sel.innerHTML = '<option value="">Semua Pair</option>' + pairs.map(p=>`<option value="${p}">${p}</option>`).join('');
+    sel.value = current;
+  }
+
+  function renderTable(){
+    const holder = document.getElementById('tableHolder');
+    const pairFilter = document.getElementById('filterPair').value;
+    const dirFilter = document.getElementById('filterDir').value;
+    const search = document.getElementById('filterSearch').value.toLowerCase();
+
+    let list = [...trades].sort((a,b)=> new Date(b.date) - new Date(a.date) || b.createdAt - a.createdAt);
+    if(pairFilter) list = list.filter(t=>t.pair===pairFilter);
+    if(dirFilter) list = list.filter(t=>t.direction===dirFilter);
+    if(search) list = list.filter(t=> (t.notes||'').toLowerCase().includes(search) || (t.strategy||'').toLowerCase().includes(search));
+
+    if(!list.length){
+      holder.innerHTML = `<div class="empty-state"><div class="big">Belum ada trade yang cocok</div>Catat trade pertamamu di panel sebelah kiri.</div>`;
+      return;
+    }
+
+    holder.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th><th>Pair</th><th>Arah</th><th>Pips</th><th>P&amp;L</th><th>Strategi</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${list.map(t=>`
+            <tr>
+              <td>${t.date}</td>
+              <td class="pair-cell">${t.pair}</td>
+              <td><span class="pill ${t.direction==='Buy'?'buy':'sell'}">${t.direction}</span></td>
+              <td>${fmtPips(t.pips)}</td>
+              <td class="pnl ${t.pnl>0?'pos':t.pnl<0?'neg':''}">${fmtMoney(t.pnl)}</td>
+              <td style="font-family:var(--font-body); font-size:12.5px;">${t.strategy||'—'}</td>
+              <td>
+                <div class="row-actions">
+                  <button class="icon-btn" onclick="editTrade('${t.id}')">Edit</button>
+                  <button class="icon-btn" onclick="deleteTrade('${t.id}')">Hapus</button>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderAll(){
+    if(!loaded) return;
+    renderStats();
+    renderTicker();
+    renderChart();
+    renderBreakdown();
+    populatePairFilter();
+    renderTable();
+  }
+
+  window.renderTable = renderTable;
+
+  loadTrades();
+})();
+</script>
